@@ -15,9 +15,18 @@ public class DepartmentController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Department dept)
+    public async Task<IActionResult> Create([FromBody] Department department)
     {
-        await _client.Cypher.Create("(d:Department $dept)").WithParam("dept", dept).ExecuteWithoutResultsAsync();
+        await _client.Cypher
+        .Create("(d:Department {id: $id, title: $title, activity: $activity})")
+        .WithParams(new
+        {
+            id = department.Id,
+            title = department.Title,
+            activity = department.Activity
+        })
+        .ExecuteWithoutResultsAsync();
+
         return Ok();
     }
 
@@ -32,7 +41,7 @@ public class DepartmentController : Controller
     public async Task<IActionResult> GetById(int id)
     {
         var department = await _client.Cypher.Match("(d:Department)")
-            .Where((Department d) => d.id == id)
+            .Where((Department d) => d.Id == id)
             .Return(d => d.As<Department>())
             .ResultsAsync;
         return Ok(department.LastOrDefault());
@@ -41,7 +50,7 @@ public class DepartmentController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         await _client.Cypher.Match("(d:Department)")
-           .Where((Department d) => d.id == id)
+           .Where((Department d) => d.Id == id)
            .Delete("d").ExecuteWithoutResultsAsync();
         return Ok();
                 
@@ -51,7 +60,7 @@ public class DepartmentController : Controller
     public async Task<IActionResult> Update (int id,[FromBody] Department dept)
     {
         await _client.Cypher.Match("(d:Department)")
-            .Where((Department d) => d.id == id)
+            .Where((Department d) => d.Id == id)
             .Set("d = $dept")
             .WithParam("dept", dept)
             .ExecuteWithoutResultsAsync();

@@ -1,10 +1,18 @@
 ﻿namespace SampleNeo4J.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class Department
     {
-        public int id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
-        public string title { get; set; }
-        public string activity { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Title { get; set; }
+
+        [StringLength(255)]
+        public string Activity { get; set; }
     }
+
 }

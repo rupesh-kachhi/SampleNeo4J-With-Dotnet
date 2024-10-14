@@ -18,16 +18,7 @@ namespace SampleNeo4J.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Employee employee)
         {
-            await _client.Cypher
-        .Create("(e:Employee {id: $id, name: $name, skills: $skills, level: $level})")
-        .WithParams(new
-        {
-            id = employee.Id,
-            name = employee.Name,
-            skills = employee.Skills, // Assuming Skills is a List<string>
-            level = employee.Level
-        })
-        .ExecuteWithoutResultsAsync();
+            await _client.Cypher.Create("(d:Employee $employee)").WithParam("employee", employee).ExecuteWithoutResultsAsync();
             return Ok();
         }
 

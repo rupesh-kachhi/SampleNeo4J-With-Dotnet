@@ -9,24 +9,15 @@ public class DepartmentController : Controller
 {
     private IGraphClient _client;
 
-    public DepartmentController(IGraphClient graphClient) 
+    public DepartmentController(IGraphClient graphClient)
     {
         _client = graphClient;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Department department)
+    public async Task<IActionResult> Create([FromBody] Department dept)
     {
-        await _client.Cypher
-        .Create("(d:Department {id: $id, title: $title, activity: $activity})")
-        .WithParams(new
-        {
-            id = department.Id,
-            title = department.Title,
-            activity = department.Activity
-        })
-        .ExecuteWithoutResultsAsync();
-
+        await _client.Cypher.Create("(d:Department $dept)").WithParam("dept", dept).ExecuteWithoutResultsAsync();
         return Ok();
     }
 
@@ -53,11 +44,11 @@ public class DepartmentController : Controller
            .Where((Department d) => d.Id == id)
            .Delete("d").ExecuteWithoutResultsAsync();
         return Ok();
-                
+
 
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update (int id,[FromBody] Department dept)
+    public async Task<IActionResult> Update(int id, [FromBody] Department dept)
     {
         await _client.Cypher.Match("(d:Department)")
             .Where((Department d) => d.Id == id)

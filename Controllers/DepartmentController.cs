@@ -31,10 +31,30 @@ public class DepartmentController : Controller
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var department = await _client.Cypher.Match("(n:Department)")
+        var department = await _client.Cypher.Match("(d:Department)")
             .Where((Department d) => d.id == id)
             .Return(d => d.As<Department>())
             .ResultsAsync;
         return Ok(department.LastOrDefault());
+    }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _client.Cypher.Match("(d:Department)")
+           .Where((Department d) => d.id == id)
+           .Delete("d").ExecuteWithoutResultsAsync();
+        return Ok();
+                
+
+    }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update (int id,[FromBody] Department dept)
+    {
+        await _client.Cypher.Match("(d:Department)")
+            .Where((Department d) => d.id == id)
+            .Set("d = $dept")
+            .WithParam("dept", dept)
+            .ExecuteWithoutResultsAsync();
+        return Ok();
     }
 }

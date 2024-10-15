@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Neo4jClient;
 using SampleNeo4J.Models;
+using SampleNeo4J.Services.Interface;
 
 namespace SampleNeo4J.Controllers
 {
@@ -8,42 +9,37 @@ namespace SampleNeo4J.Controllers
     [ApiController]
     public class EmployeeController : Controller
     {
-        private IGraphClient _client;
+        private IEmployeeService _IEmployeeService;
 
-        public EmployeeController(IGraphClient graphClient)
+        public EmployeeController(IEmployeeService iEmployeeService)
         {
-            _client = graphClient;
+            _IEmployeeService = iEmployeeService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Employee employee)
         {
-            await _client.Cypher.Create("(d:Employee $employee)").WithParam("employee", employee).ExecuteWithoutResultsAsync();
+            await _IEmployeeService.Create(employee);
             return Ok();
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<List<Employee>> Get()
         {
-            var employees = await _client.Cypher.Match("(n:Employee)").Return(n => n.As<Employee>()).ResultsAsync;
-            return Ok(employees);
+            var employees = await _IEmployeeService.Get();
+            return employees;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var employee = await _client.Cypher.Match("(d:Employee)")
-                .Where((Employee d) => d.Id == id)
-                .Return(d => d.As<Employee>())
-                .ResultsAsync;
-            return Ok(employee.LastOrDefault());
+            var employee = await _IEmployeeService.GetById(id);
+            return Ok(employee);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _client.Cypher.Match("(d:Employee)")
-               .Where((Employee d) => d.Id == id)
-               .Delete("d").ExecuteWithoutResultsAsync();
+            await _IEmployeeService.Delete(id);
             return Ok();
 
 
@@ -51,11 +47,7 @@ namespace SampleNeo4J.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Employee employee)
         {
-            await _client.Cypher.Match("(d:Employee)")
-                .Where((Employee d) => d.Id == id)
-                .Set("d = $dept")
-                .WithParam("dept", employee)
-                .ExecuteWithoutResultsAsync();
+            await _IEmployeeService.Update(id, employee);
             return Ok();
         }
     }

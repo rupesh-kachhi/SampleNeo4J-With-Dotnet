@@ -22,10 +22,10 @@ public class DepartmentController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<List<Department>> Get()
     {
         var departments = await _client.Cypher.Match("(n:Department)").Return(n => n.As<Department>()).ResultsAsync;
-        return Ok(departments);
+        return departments.ToList();
     }
 
     [HttpGet("{id}")]

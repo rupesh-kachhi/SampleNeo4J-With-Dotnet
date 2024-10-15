@@ -1,0 +1,74 @@
+﻿@model SampleNeo4J.Views.Home.IndexModel
+
+
+<h2>Employee and Department Management</h2>
+
+<div>
+    <h3>Employees</h3>
+    <form asp-action="CreateEmployee" method="post">
+        <label>Name:</label>
+        <input type="text" name="Name" required />
+        <label>Skills (comma-separated):</label>
+        <input type="text" name="Skills" required />
+        <label>Level:</label>
+        <input type="text" name="Level" required />
+        <button type="submit">Add Employee</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Skills</th>
+                <th>Level</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+           @*  @foreach (var employee in Model.Employees)
+            {
+                <tr>
+                    <td>@employee.Name</td>
+                    <td>@string.Join(", ", employee.Skills)</td>
+                    <td>@employee.Level</td>
+                    <td>
+                        <!-- Add Update and Delete buttons here -->
+                    </td>
+                </tr>
+            } *@
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h3>Departments</h3>
+    <form asp-action="CreateDepartment" method="post">
+        <label>Title:</label>
+        <input type="text" name="Title" required />
+        <label>Activity:</label>
+        <input type="text" name="Activity" />
+        <button type="submit">Add Department</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Activity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+          @*   @foreach (var department in Model.Departments)
+            {
+                <tr>
+                    <td>@department.Title</td>
+                    <td>@department.Activity</td>
+                    <td>
+                        <!-- Add Update and Delete buttons here -->
+                    </td>
+                </tr>
+            } *@
+        </tbody>
+    </table>
+</div>
